@@ -22,6 +22,7 @@ CREATE TABLE kinosal
 (
     cislo_salu INT GENERATED AS IDENTITY NOT NULL PRIMARY KEY,
     pocet_rad INT NOT NULL,
+    -- počet sedadiel?
     velikost INT NOT NULL,
     typ VARCHAR DEFAULT NULL,
     multikino_id INT DEFAULT NULL,
@@ -57,43 +58,69 @@ CREATE TABLE film
 
 CREATE TABLE zamestnanec
 (
-    id       INT          NOT NULL PRIMARY KEY,
-    jmeno    VARCHAR(255) NOT NULL,
-    prijmeni VARCHAR(255) NOT NULL,
-    adresa   VARCHAR(255) NOT NULL,
-    telcislo INT          NOT NULL
+    id  INT GENERATED AS IDENTITY NOT NULL PRIMARY KEY,
+    jmeno       VARCHAR(255) NOT NULL,
+    prijmeni    VARCHAR(255) NOT NULL,
+    ulice       VARCHAR(20)  NOT NULL,
+    mesto       VARCHAR(20)  NOT NULL,
+    psc         INT          NOT NULL
+	CHECK(REGEXP_LIKE(
+			"psc", '^[0-9]{5}$', 'i'
+		)),
+    telcislo INT        NOT NULL,
+    typ      INT        NOT NULL,
+    multikino_id INT DEFAULT NULL,
+    CONSTRAINT "multikino_id_fk"
+    	FOREIGN KEY (multikino_id) REFERENCES multikino (id)
+	ON DELETE CASCADE
 );
 
 CREATE TABLE vstupenka
 (
-    id      INT          NOT NULL PRIMARY KEY,
-    cas     VARCHAR(255) NOT NULL,
+    id  INT GENERATED AS IDENTITY NOT NULL PRIMARY KEY,
+    cas TIMESTAMP NOT NULL,
     rada    INT          NOT NULL,
     sedadlo INT          NOT NULL,
-    tarif   VARCHAR(64)  NOT NULL
+    tarif   VARCHAR(64)  NOT NULL,
+    typ      INT        NOT NULL, --specializace online vstupenka
+    stav_platby VARCHAR(16) NOT NULL,
+    rezervace_id INT DEFAULT 0 NOT NULL,
+    zamestnanec_id INT DEFAULT 0,
+    promitani_id INT DEFAULT 0, --pri zruseni premietania sa uchovaju data o predanych vstupenkach
+    CONSTRAINT "rezervace_id_fk"
+    	FOREIGN KEY (rezervace_id) REFERENCES rezervace (id)
+	ON DELETE CASCADE,
+    CONSTRAINT "zamestnanec_id_fk"
+    	FOREIGN KEY (zamestnanec_id) REFERENCES zamestnanec (id)
+	ON DELETE SET NULL,
+    CONSTRAINT "promitani_id_fk"
+    	FOREIGN KEY (promitani_id) REFERENCES promitani (id)
+	ON DELETE SET NULL
 );
-
-CREATE TABLE online_vstupenka
-(
-    id          INT         NOT NULL PRIMARY KEY,
-    stav_platby VARCHAR(16) NOT NULL
-);
-
 
 CREATE TABLE zakaznik
 (
     rc       INT          NOT NULL PRIMARY KEY,
     jmeno    VARCHAR(255) NOT NULL,
     prijmeni VARCHAR(255) NOT NULL,
-    adresa   VARCHAR(255) NOT NULL,
+    ulice       VARCHAR(20)  NOT NULL,
+    mesto       VARCHAR(20)  NOT NULL,
+    psc         INT          NOT NULL
+	CHECK(REGEXP_LIKE(
+			"psc", '^[0-9]{5}$', 'i'
+		)),
+	email VARCHAR(255),
     telcislo INT          NOT NULL
 );
 
 CREATE TABLE rezervace
 (
-    id            INT          NOT NULL PRIMARY KEY,
-    projekce      VARCHAR(255) NOT NULL,
-    zpusob_platby VARCHAR(255) NOT NULL
+    id  INT GENERATED AS IDENTITY NOT NULL PRIMARY KEY,
+    zpusob_platby VARCHAR(255) NOT NULL,
+    zakaznik_id INT DEFAULT 0 NOT NULL,
+    CONSTRAINT "zakaznik_id_fk"
+    	FOREIGN KEY (zakaznik_id) REFERENCES zakaznik (id)
+	ON DELETE CASCADE
 );
 
 ------------------------------------ DROP TABLES --------------------------------------
@@ -117,7 +144,7 @@ VALUES
 (12, 10, 250, '2D');
 
 INSERT INTO promitani
-(id, cislo_sal, delka_projekce, zacatek, konec, typ_projekce )
+(id, cislo_salu, delka_projekce, zacatek, konec, typ_projekce )
 VALUES
 (02, 12, 250, 250, '20:50', '2D');
 
