@@ -8,8 +8,13 @@
 CREATE TABLE multikino
 (
     id INT GENERATED AS IDENTITY NOT NULL PRIMARY KEY,
-    jmeno VARCHAR(255) NOT NULL,
-    adresa VARCHAR(255) NOT NULL, -- mozno jeste rozdelime na ulice,cislo,mesto atd.
+    jmeno VARCHAR(20) NOT NULL,
+    ulice VARCHAR(20) NOT NULL,
+    mesto VARCHAR(20) NOT NULL,
+    psc INT NOT NULL
+	CHECK(REGEXP_LIKE(
+			"psc", '^[0-9]{5}$', 'i'
+		)),
     trzby NUMBER DEFAULT 0 NOT NULL
 );
 
