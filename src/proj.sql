@@ -15,7 +15,11 @@ CREATE TABLE multikino
 	CHECK(REGEXP_LIKE(
 			"psc", '^[0-9]{5}$', 'i'
 		)),
-    trzby NUMBER DEFAULT 0 NOT NULL
+    trzby NUMBER DEFAULT 0 NOT NULL,
+    vedouci_id INT DEFAULT NULL,
+    CONSTRAINT "vedouci_multikino_id_fk"
+    	FOREIGN KEY (vedouci_id) REFERENCES vedouci (id)
+	ON DELETE CASCADE
 );
 
 CREATE TABLE kinosal
@@ -24,7 +28,7 @@ CREATE TABLE kinosal
     pocet_rad INT NOT NULL,
     -- počet sedadiel?
     velikost INT NOT NULL,
-    typ VARCHAR DEFAULT NULL,
+    typ VARCHAR(10) DEFAULT NULL,
     multikino_id INT DEFAULT NULL,
     CONSTRAINT "multikino_id_fk"
     	FOREIGN KEY (multikino_id) REFERENCES multikino (id)
@@ -37,7 +41,7 @@ CREATE TABLE promitani
     delka_projekce INT NOT NULL,
     zacatek TIMESTAMP NOT NULL,
     konec TIMESTAMP  NOT NULL,
-    typ_projekce VARCHAR DEFAULT '2D' NOT NULL,
+    typ_projekce VARCHAR(10) DEFAULT '2D' NOT NULL,
     cislo_salu INT DEFAULT 0 NOT NULL,
     film_id INT DEFAULT 0 NOT NULL,
     CONSTRAINT "cislo_salu_id_fk"
@@ -72,7 +76,16 @@ CREATE TABLE zamestnanec
     multikino_id INT DEFAULT NULL,
     CONSTRAINT "multikino_id_fk"
     	FOREIGN KEY (multikino_id) REFERENCES multikino (id)
-	ON DELETE CASCADE
+	ON DELETE CASCADE,
+    vedouci_id INT DEFAULT NULL,
+	CONSTRAINT "vedouci_zamestnanec_id_fk"
+		FOREIGN KEY (vedouci_id) REFERENCES vedouci (id)
+		ON DELETE SET NULL
+);
+
+CREATE TABLE vedouci
+(
+    id  INT GENERATED AS IDENTITY NOT NULL PRIMARY KEY
 );
 
 CREATE TABLE vstupenka
@@ -119,7 +132,7 @@ CREATE TABLE rezervace
     zpusob_platby VARCHAR(255) NOT NULL,
     zakaznik_id INT DEFAULT 0 NOT NULL,
     CONSTRAINT "zakaznik_id_fk"
-    	FOREIGN KEY (zakaznik_id) REFERENCES zakaznik (id)
+    	FOREIGN KEY (zakaznik_id) REFERENCES zakaznik (rc)
 	ON DELETE CASCADE
 );
 
@@ -131,12 +144,14 @@ DROP TABLE PROMITANI;
 DROP TABLE FILM;
 DROP TABLE ZAMESTNANEC;
 DROP TABLE VSTUPENKA;
-DROP TABLE ONLINE_BSTUPENKA;
-DROP TABLE PROGRAM;
 DROP TABLE ZAKAZNIK;
 DROP TABLE REZERVACE;
 
 ------------------------------------ INSERT -------------------------------------------
+INSERT INTO multikino
+(jmeno, ulice, mesto, psc, trzby)
+VALUES
+('Mlyny', 'Mlynska', 'Brno', 94302, 3065.10);
 
 INSERT INTO kinosal
 (cislo_salu, pocet_rad, velikost, typ)
