@@ -25,8 +25,9 @@ CREATE TABLE multikino
 (
     id INT GENERATED AS IDENTITY NOT NULL PRIMARY KEY,
     jmeno VARCHAR(255) NOT NULL,
-    ulice VARCHAR(255) NOT NULL,
     mesto VARCHAR(255) NOT NULL,
+    ulice VARCHAR(255) NOT NULL,
+    cislo_domu INT NOT NULL,
     trzby NUMBER DEFAULT 0 NOT NULL,
     vedouci_id INT DEFAULT NULL UNIQUE,
     CONSTRAINT "vedouci_multikino_id_fk"
@@ -75,8 +76,9 @@ CREATE TABLE zamestnanec
     id  INT GENERATED AS IDENTITY NOT NULL PRIMARY KEY,
     jmeno  VARCHAR(255) NOT NULL,
     prijmeni  VARCHAR(255) NOT NULL,
-    ulice  VARCHAR(20) NOT NULL,
     mesto   VARCHAR(20) NOT NULL,
+    ulice  VARCHAR(20) NOT NULL,
+    cislo_domu INT NOT NULL,
     email VARCHAR(255)
 	    CHECK(REGEXP_LIKE(
 		email, '^[a-z]+[a-z0-9\.]*@[a-z0-9\.-]+\.[a-z]{2,}$', 'i'
@@ -85,13 +87,11 @@ CREATE TABLE zamestnanec
         CHECK(REGEXP_LIKE(
                 telcislo , '^((420|421)[0-9]{9})$', 'i'
             )),
-    typ VARCHAR(255) NOT NULL,
-        CONSTRAINT  typ_zamestnance CHECK(typ = 'Vedouci' or typ = 'Zamestnanec'),
     multikino_id INT DEFAULT NULL,
     CONSTRAINT "multikino_idd_fk"
     	FOREIGN KEY (multikino_id) REFERENCES multikino (id)
 	        ON DELETE CASCADE,
-    vedouci_id INT DEFAULT NULL,
+    vedouci_id INT DEFAULT NULL, --ak null, zamestnanec neni vedouci
 	CONSTRAINT "vedouci_zamestnanec_idd_fk"
 		FOREIGN KEY (vedouci_id) REFERENCES vedouci (id)
 		    ON DELETE SET NULL
@@ -107,8 +107,9 @@ CREATE TABLE zakaznik
             check(MOD(RC, 11) = 0),
     jmeno VARCHAR(255) NOT NULL,
     prijmeni VARCHAR(255) NOT NULL,
-    ulice VARCHAR(20)  NOT NULL,
     mesto VARCHAR(20)  NOT NULL,
+    ulice VARCHAR(20)  NOT NULL,
+    cislo_domu INT NOT NULL,
 	email VARCHAR(255)
 	    CHECK(REGEXP_LIKE(
 		email, '^[a-z]+[a-z0-9\.]*@[a-z0-9\.-]+\.[a-z]{2,}$', 'i'
@@ -143,7 +144,7 @@ CREATE TABLE vstupenka
         CONSTRAINT stav_platby CHECK(stav_platby= 'Zaplaceno' or stav_platby = 'Nezaplaceno'),
     rezervace_id INT DEFAULT 0 NOT NULL,
     zamestnanec_id INT DEFAULT 0,
-    promitani_id INT DEFAULT 0, --pri zruseni premietania sa uchovaju data o predanych vstupenkach
+    promitani_id INT DEFAULT 0, --pri zruseni promitani jse uchovaji data o predanych vstupenkach
     CONSTRAINT "rezervace_id_fk"
     	FOREIGN KEY (rezervace_id) REFERENCES rezervace (id)
 	        ON DELETE CASCADE,
@@ -160,11 +161,11 @@ CREATE TABLE vstupenka
 INSERT INTO VEDOUCI (id) VALUES (1);
 INSERT INTO VEDOUCI (id) VALUES (2);
 
-INSERT INTO MULTIKINO (jmeno, ulice, mesto, trzby, vedouci_id)
-VALUES ('OC OLYMPIA' , 'U Dálnice ', 'Modřice', '123456', 1);
+INSERT INTO MULTIKINO (jmeno, mesto,ulice, cislo_domu, trzby, vedouci_id)
+VALUES ('OC OLYMPIA' , 'Modřice', 'U Dálnice ', 3, '123456', 1);
 
-INSERT INTO MULTIKINO (jmeno, ulice, mesto, trzby, vedouci_id)
-VALUES ('OC Velky Špalicek' , 'Mečová 695', 'Brno', '456687', 2);
+INSERT INTO MULTIKINO (jmeno, mesto, ulice, cislo_domu, trzby, vedouci_id)
+VALUES ('OC Velky Špalicek' , 'Brno', 'Mečová 695', 43, '456687', 2);
 
 INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id) VALUES (15, 250, '2D', 1);
 INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id) VALUES (20, 300, '3D', 1);
@@ -181,15 +182,15 @@ INSERT INTO FILM (dabing, zanr) VALUES ('cesky', 'drama');
 INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
 VALUES (120, '10:10:10', '10:10:10' , 2 ,1 );
 
-INSERT INTO zamestnanec(jmeno, prijmeni, ulice, mesto, email, telcislo, typ, multikino_id, vedouci_id)
-VALUES('X', 'Y', 'Husova', 'Modřice', 'vedouci@multikino2.cz', 420111111111, 'Vedouci', 2, 2);
-INSERT INTO zamestnanec(jmeno, prijmeni, ulice, mesto, email, telcislo, typ, multikino_id, vedouci_id)
-VALUES('A', 'B', 'Česká', 'Brno', 'vedouci@multikino1.cz', 420111111111, 'Vedouci', 1, 1);
-INSERT INTO zamestnanec(jmeno, prijmeni, ulice, mesto, email, telcislo, typ, multikino_id)
-VALUES('X', 'X', 'Hlavní', 'Brno', 'zamestnanec@multikino1.cz', 420111111111, 'Zamestnanec', 1);
+INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo, multikino_id, vedouci_id)
+VALUES('X', 'Y', 'Modřice', 'Husova', 33, 'vedouci@multikino2.cz', 420111111111, 2, 2);
+INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo, multikino_id, vedouci_id)
+VALUES('A', 'B', 'Brno', 'Česká', 23, 'vedouci@multikino1.cz', 420111111111, 1, 1);
+INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo, multikino_id)
+VALUES('X', 'X', 'Brno', 'Hlavní', 30, 'zamestnanec@multikino1.cz', 420111111111, 1);
 
-INSERT INTO zakaznik(rc, jmeno, prijmeni, ulice, mesto, email, telcislo)
-VALUES(7204250999 ,'X', 'Y', 'Hlavni', 'Brno', 'vedouci@multikino.cz', 420111111111);
+INSERT INTO zakaznik(rc, jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo)
+VALUES(7204250999 ,'X', 'Y', 'Brno', 'Hlavni', 12, 'vedouci@multikino.cz', 420111111111);
 
 INSERT INTO  rezervace(zpusob_platby, zakaznik_id)
 VALUES ('Hotove', 7204250999);
