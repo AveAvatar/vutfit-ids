@@ -182,7 +182,11 @@ INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
 VALUES (120, '10:10:10', '10:10:10' , 2 ,1 );
 
 INSERT INTO zamestnanec(jmeno, prijmeni, ulice, mesto, email, telcislo, typ, multikino_id, vedouci_id)
-VALUES('X', 'Y', 'Hlavni', 'Brno', 'vedouci@multikino.cz', 420111111111, 'Zamestnanec', 2, 2);
+VALUES('X', 'Y', 'Husova', 'Modřice', 'vedouci@multikino2.cz', 420111111111, 'Vedouci', 2, 2);
+INSERT INTO zamestnanec(jmeno, prijmeni, ulice, mesto, email, telcislo, typ, multikino_id, vedouci_id)
+VALUES('A', 'B', 'Česká', 'Brno', 'vedouci@multikino1.cz', 420111111111, 'Vedouci', 1, 1);
+INSERT INTO zamestnanec(jmeno, prijmeni, ulice, mesto, email, telcislo, typ, multikino_id)
+VALUES('X', 'X', 'Hlavní', 'Brno', 'zamestnanec@multikino1.cz', 420111111111, 'Zamestnanec', 1);
 
 INSERT INTO zakaznik(rc, jmeno, prijmeni, ulice, mesto, email, telcislo)
 VALUES(7204250999 ,'X', 'Y', 'Hlavni', 'Brno', 'vedouci@multikino.cz', 420111111111);
@@ -194,8 +198,11 @@ INSERT INTO  rezervace(zpusob_platby, zakaznik_id)
 VALUES ('Online', 7204250999);
 
 INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
-VALUES (4, 10, 'Dospely', '', 'Zaplaceno', 1, 1, 1);
-
+VALUES (4, 10, 'Dospely', '', 'Zaplaceno', 1, 3, 1);
+INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
+VALUES (6, 22, 'Dospely', '', 'Zaplaceno', 2, 3, 1);
+INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
+VALUES (6, 23, 'Dospely', '', 'Zaplaceno', 2, 3, 1);
 ------------------------------------ ZOBRAZENI TABULEK --------------------------------------
 
 SELECT * FROM VEDOUCI;
