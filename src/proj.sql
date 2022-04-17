@@ -51,6 +51,7 @@ CREATE TABLE kinosal
 CREATE TABLE film
 (
     id  INT GENERATED AS IDENTITY NOT NULL PRIMARY KEY,
+    nazev VARCHAR(255) NOT NULL,
     dabing  VARCHAR(255) NOT NULL,
     titulky VARCHAR(255) DEFAULT NULL,
     zanr  VARCHAR(255) NOT NULL
@@ -171,7 +172,6 @@ INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
 VALUES (20, 300, '3D', 1);
 INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
 VALUES (15, 250, '2D', 1);
-
 INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
 VALUES (15, 250, '2D', 2);
 INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
@@ -179,32 +179,46 @@ VALUES (20, 300, '3D', 2);
 INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
 VALUES (15, 250, '2D', 2);
 
-INSERT INTO FILM (dabing, zanr)
-VALUES ('český', 'komedie');
-INSERT INTO FILM (dabing, titulky, zanr)
-VALUES ('anglický', 'české', 'komedie');
-INSERT INTO FILM (dabing, zanr)
-VALUES ('český', 'drama');
+INSERT INTO FILM (nazev, dabing, zanr)
+VALUES ('FILM XYZ','český', 'komedie');
+INSERT INTO FILM (nazev, dabing, titulky, zanr)
+VALUES ('FILM ABC', 'anglický', 'české', 'komedie');
+INSERT INTO FILM (nazev,dabing, zanr)
+VALUES ('FILM LMN', 'český', 'drama');
+INSERT INTO FILM (nazev,dabing, titulky, zanr)
+VALUES ('FILM PQR', 'německý', 'české','drama');
 
 INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
 VALUES (120, '21-12-2021 12:00:00', '21-12-2021 14:00:00', 2, 1);
 INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
 VALUES (90, '21-12-2021 14:00:00', '21-12-2021 15:30:00', 4, 2);
 INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
-VALUES (100, '22-12-2021 18:00:00', '22-12-2021 19:40:00', 5, 2);
+VALUES (180, '22-12-2021 18:00:00', '22-12-2021 21:00:00', 5, 4);
+INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
+VALUES (180, '22-12-2021 12:00:00', '23-12-2021 15:00:00', 2, 4);
+INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
+VALUES (180, '23-12-2021 14:00:00', '23-12-2021 17:00:00', 4, 4);
+INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
+VALUES (100, '23-12-2021 11:00:00', '23-12-2021 12:40:00', 5, 3);
 
 INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo, multikino_id, vedouci_id)
 VALUES('Pan', 'A', 'Modřice', 'Husova', 33, 'vedouci@multikino2.cz', 420111111111, 2, 2);
 INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo, multikino_id, vedouci_id)
 VALUES('Pan', 'B', 'Brno', 'Česká', 23, 'vedouci@multikino1.cz', 420111111111, 1, 1);
 INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo, multikino_id)
-VALUES('Paní', 'C', 'Brno', 'Hlavní', 30, 'zamestnanec@multikino1.cz', 420111111111, 1);
+VALUES('Paní', 'C', 'Brno', 'Hlavní', 30, 'zamestnanec3@multikino1.cz', 420111111111, 1);
+INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo, multikino_id)
+VALUES('Pan', 'D', 'Brno', 'Jánská', 40, 'zamestnanec4@multikino1.cz', 420111111111, 1);
 
 INSERT INTO zakaznik(rc, jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo)
 VALUES(7204250999 ,'Pan', 'Y', 'Brno', 'Hlavní', 12, 'panx@seznam.cz', 420111111111);
 INSERT INTO zakaznik(rc, jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo)
 VALUES(6162256386 ,'Paní', 'Y', 'Praha', 'Masarykova', 24, 'paniy@email.cz', 420222222222);
+INSERT INTO zakaznik(rc, jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo)
+VALUES(8160080610 ,'Paní', 'Z', 'Praha', 'Masarykova', 25, 'paniy@email.cz', 420222222222);
 
+INSERT INTO rezervace(zpusob_platby, zakaznik_id)
+VALUES ('Hotove', 7204250999);
 INSERT INTO rezervace(zpusob_platby, zakaznik_id)
 VALUES ('Hotove', 7204250999);
 INSERT INTO  rezervace(zpusob_platby, zakaznik_id)
@@ -213,11 +227,114 @@ INSERT INTO  rezervace(zpusob_platby, zakaznik_id)
 VALUES ('Online', 6162256386);
 
 INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
-VALUES (4, 10, 'Dospely', '', 'Zaplaceno', 1, 3, 1);
+VALUES (4, 9, 'Dospely', '', 'Zaplaceno', 1, 2, 2);
+INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
+VALUES (4, 8, 'Dospely', '', 'Zaplaceno', 1, 2, 2);
+INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
+VALUES (4, 10, 'Dite', '', 'Zaplaceno', 1, 2, 2);
+INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
+VALUES (5, 12, 'Student', '', 'Zaplaceno', 2, 4, 5);
+INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
+VALUES (5, 11, 'Dospely', '', 'Zaplaceno', 2, 4, 5);
+INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
+VALUES (10, 1, 'Dite', '', 'Zaplaceno', 1, 3, 3);
 INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id,  promitani_id )
 VALUES (5, 22, 'Dospely', 'Online', 'Zaplaceno', 2, 1);
 INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, promitani_id )
 VALUES (4, 23, 'Student', 'Online', 'Nezaplaceno', 3, 1);
+
+----------------------------------------- SELECTS ------------------------------------------
+
+-- Kdy byly promítané jednotlivé filmy (seřazené podle začátku promítání)
+-- spojení dvou tabulek
+-- (název filmy, začátek promítání, konec promítání)
+SELECT F.nazev,
+       P.zacatek,
+       P.konec,
+       P.id AS cislo_promitani
+FROM PROMITAni P, FILM F
+WHERE F.id = P.film_id
+ORDER BY P.zacatek;
+
+-- V jakém multikinu jedotliví zaměstnanci pracují
+-- spojení dvou tabulek
+-- (id, jméno, příjmení, jméno kina)
+SELECT  Z.id,
+        Z.jmeno,
+        Z.prijmeni,
+        M.jmeno AS multikino
+FROM MULTIKINO M, ZAMESTNANEC Z
+WHERE M.id = Z.multikino_id
+ORDER BY M.jmeno, Z.prijmeni;
+
+-- Kolik promítání proběhlo v jednotlivích multikinech
+-- spojení tří tabulek
+-- (jméno, počet promítání)
+SELECT
+    M.jmeno,
+    COUNT(P.id) AS pocet_promitani
+FROM MULTIKINO M, KINOSAL K, PROMITANI P
+WHERE P.cislo_salu = K.cislo_salu
+  AND K.multikino_id = M.id
+GROUP BY M.jmeno
+ORDER BY pocet_promitani DESC;
+
+-- Zaměstnanci kteří prodali více než 1 vstupenku, a kolik jich prodali
+-- klauzule GROUP BY s použitím agregační funkce
+-- (id, jméno, příjmení, počet prodaných vstupenek)
+SELECT
+    Z.jmeno,
+    Z.prijmeni,
+    COUNT(V.id) AS pocet_vstupenek
+FROM ZAMESTNANEC Z
+JOIN VSTUPENKA V ON Z.id = V.zamestnanec_id
+GROUP BY Z.jmeno, Z.prijmeni
+HAVING COUNT(V.id) > 1
+ORDER BY Z.jmeno, Z.prijmeni;
+
+-- Na který se film se prodalo kolik vstupenek
+-- klauzule GROUP BY s použitím agregační funkce
+-- (id filmu, název filmu, počet prodaných vstupenek)
+SELECT
+    F.id,
+    F.nazev,
+    COUNT(V.id) as pocet_vstupenek
+FROM VSTUPENKA V, PROMITANI P, FILM F
+WHERE V.promitani_id = P.id AND P.film_id = F.id
+GROUP BY F.id, F.nazev
+HAVING COUNT(V.id) >= ALL (
+        SELECT COUNT(F1.id)
+        FROM  FILM F1
+        GROUP BY F1.id
+    );
+
+-- Kteří zaměstnanci prodali alespoň nějakou vstupenku a nejsou zároveň vedoucím multikina
+-- predikát EXIST
+-- (id, jméno, příjmení)
+SELECT
+    Z.id,
+    Z.jmeno,
+    Z.prijmeni
+FROM ZAMESTNANEC Z
+WHERE EXISTS(
+        SELECT *
+        FROM VSTUPENKA V
+        WHERE z.id = v.zamestnanec_id)
+AND vedouci_id IS NULL
+ORDER BY Z.id;
+
+-- Který zákazník nemá žádné rezervace
+-- predikát IN s vnořeným SELECT
+-- (rodné číslo, jméno, příjmení)
+SELECT
+    Z.rc,
+    Z.jmeno,
+    Z.prijmeni
+FROM ZAKAZNIK Z
+WHERE z.rc NOT IN (
+    SELECT r.zakaznik_id
+    FROM REZERVACE R
+);
 
 ------------------------------------ ZOBRAZENÍ TABULEK --------------------------------------
 
