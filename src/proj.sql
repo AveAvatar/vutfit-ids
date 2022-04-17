@@ -256,15 +256,15 @@ FROM PROMITAni P, FILM F
 WHERE F.id = P.film_id
 ORDER BY P.zacatek;
 
--- V jakém multikinu jedotliví zaměstnanci pracují
+-- Kteří zaměstnanci pracují v multikinu Olympia?
 -- spojení dvou tabulek
--- (id, jméno, příjmení, jméno kina)
+-- (id, jméno, příjmení)
 SELECT  Z.id,
         Z.jmeno,
-        Z.prijmeni,
-        M.jmeno AS multikino
-FROM MULTIKINO M, ZAMESTNANEC Z
-WHERE M.id = Z.multikino_id
+        Z.prijmeni
+FROM MULTIKINO M
+JOIN ZAMESTNANEC Z ON M.id = Z.multikino_id
+WHERE M.jmeno = 'OC OLYMPIA'
 ORDER BY M.jmeno, Z.prijmeni;
 
 -- Kolik promítání proběhlo v jednotlivích multikinech
