@@ -14,17 +14,22 @@ DROP TABLE FILM;
 DROP TABLE KINOSAL;
 DROP TABLE MULTIKINO;
 DROP TABLE VEDOUCI;
+DROP SEQUENCE cisloMultikina;
+DROP SEQUENCE salCislo;
 
 ------------------------------- VYTVOŘENÍ TABULEK ------------------------------
+
+CREATE SEQUENCE cisloMultikina START WITH 1000 increment by 1000;
 
 CREATE TABLE vedouci
 (
     id INT NOT NULL PRIMARY KEY
 );
 
+
 CREATE TABLE multikino
 (
-    id INT NOT NULL PRIMARY KEY,
+    id INT DEFAULT cisloMultikina.nextval PRIMARY KEY,
     jmeno VARCHAR(255) NOT NULL,
     mesto VARCHAR(255) NOT NULL,
     ulice VARCHAR(255) NOT NULL,
@@ -38,7 +43,7 @@ CREATE TABLE multikino
 
 CREATE TABLE kinosal
 (
-    cislo_salu INT  default NULL PRIMARY KEY,
+    cislo_salu INT DEFAULT NULL PRIMARY KEY,
     pocet_rad INT NOT NULL,
     pocet_sedadel INT NOT NULL,
     typ VARCHAR(16) DEFAULT '2D' NOT NULL,
@@ -162,10 +167,10 @@ VALUES (1);
 INSERT INTO VEDOUCI (id)
 VALUES (2);
 
-INSERT INTO MULTIKINO (id, jmeno, mesto,ulice, cislo_domu, trzby, vedouci_id)
-VALUES (1000, 'OC OLYMPIA' , 'Modřice', 'U Dálnice ', 3, 123456, 1);
-INSERT INTO MULTIKINO (id, jmeno, mesto, ulice, cislo_domu, trzby, vedouci_id)
-VALUES (2000, 'OC Velky Špalíček' , 'Brno', 'Mečová 695', 43, 456687, 2);
+INSERT INTO MULTIKINO (jmeno, mesto,ulice, cislo_domu, trzby, vedouci_id)
+VALUES ('OC OLYMPIA' , 'Modřice', 'U Dálnice ', 3, 123456, 1);
+INSERT INTO MULTIKINO (jmeno, mesto, ulice, cislo_domu, trzby, vedouci_id)
+VALUES ('OC Velky Špalíček' , 'Brno', 'Mečová 695', 43, 456687, 2);
 
 INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, multikino_id)
 VALUES (15, 250, 1000);
@@ -174,11 +179,11 @@ VALUES (20, 300, '3D', 1000);
 INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
 VALUES (15, 250, '2D', 1000);
 INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
-VALUES (15, 250, '2D', 2);
+VALUES (15, 250, '2D', 2000);
 INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
-VALUES (20, 300, '3D', 2);
+VALUES (20, 300, '3D', 2000);
 INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
-VALUES (15, 250, '2D', 2);
+VALUES (15, 250, '2D', 2000);
 
 INSERT INTO FILM (nazev, dabing, zanr)
 VALUES ('FILM XYZ','český', 'komedie');
@@ -190,26 +195,26 @@ INSERT INTO FILM (nazev,dabing, titulky, zanr)
 VALUES ('FILM PQR', 'německý', 'české','drama');
 
 INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
-VALUES (120, '21-12-2021 12:00:00', '21-12-2021 14:00:00', 2, 1);
+VALUES (120, '21-12-2021 12:00:00', '21-12-2021 14:00:00', 1002, 1);
 INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
-VALUES (90, '21-12-2021 14:00:00', '21-12-2021 15:30:00', 4, 2);
+VALUES (90, '21-12-2021 14:00:00', '21-12-2021 15:30:00', 2004, 2);
 INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
-VALUES (180, '22-12-2021 18:00:00', '22-12-2021 21:00:00', 5, 4);
+VALUES (180, '22-12-2021 18:00:00', '22-12-2021 21:00:00', 2005, 4);
 INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
-VALUES (180, '22-12-2021 12:00:00', '23-12-2021 15:00:00', 2, 4);
+VALUES (180, '22-12-2021 12:00:00', '23-12-2021 15:00:00', 1002, 4);
 INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
-VALUES (180, '23-12-2021 14:00:00', '23-12-2021 17:00:00', 4, 4);
+VALUES (180, '23-12-2021 14:00:00', '23-12-2021 17:00:00', 2004, 4);
 INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
-VALUES (100, '23-12-2021 11:00:00', '23-12-2021 12:40:00', 5, 3);
+VALUES (100, '23-12-2021 11:00:00', '23-12-2021 12:40:00', 2005, 3);
 
 INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, mzda, email, telcislo, multikino_id, vedouci_id)
-VALUES('Pan', 'A', 'Modřice', 'Husova', 33, 45555, 'vedouci@multikino2.cz', 420111111111, 2, 2);
+VALUES('Pan', 'A', 'Modřice', 'Husova', 33, 45555, 'vedouci@multikino2.cz', 420111111111, 2000, 2);
 INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, mzda, email, telcislo, multikino_id, vedouci_id)
-VALUES('Pan', 'B', 'Brno', 'Česká', 23,  55655, 'vedouci@multikino1.cz', 420111111111, 1, 1);
+VALUES('Pan', 'B', 'Brno', 'Česká', 23,  55655, 'vedouci@multikino1.cz', 420111111111, 1000, 1);
 INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, mzda, email, telcislo, multikino_id)
-VALUES('Paní', 'C', 'Brno', 'Hlavní', 30,  15555, 'zamestnanec3@multikino1.cz', 420111111111, 1);
+VALUES('Paní', 'C', 'Brno', 'Hlavní', 30,  15555, 'zamestnanec3@multikino1.cz', 420111111111, 1000);
 INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, mzda, email, telcislo, multikino_id)
-VALUES('Pan', 'D', 'Brno', 'Jánská', 40,  25555, 'zamestnanec4@multikino1.cz', 420111111111, 1);
+VALUES('Pan', 'D', 'Brno', 'Jánská', 40,  25555, 'zamestnanec4@multikino1.cz', 420111111111, 1000);
 
 INSERT INTO zakaznik(rc, jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo)
 VALUES(7204250999 ,'Pan', 'Y', 'Brno', 'Hlavní', 12, 'panx@seznam.cz', 420111111111);
@@ -240,34 +245,36 @@ VALUES (5, 11, 'Dospely', '', 'Zaplaceno', 2, 4, 5);
 INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
 VALUES (10, 1, 'Dite', '', 'Zaplaceno', 1, 3, 3);
 INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id,  promitani_id )
-VALUES (5, 22, 'Dospely', 'Online', 'Zaplaceno', 2, 1);
+VALUES (5, 22, 'Dospely', 'Online', 'Zaplaceno', 2, 3);
 INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, promitani_id )
 VALUES (4, 23, 'Student', 'Online', 'Nezaplaceno', 3, 1);
 
 ----------------------------------------- TRIGGERS -----------------------------------------
 
-
-CREATE SEQUENCE salCislo START WITH 10 increment by 10;
+-- 1) Trigger generující identifikační čísla pro kinosály. První dvě číslice vyznačují kino ve kterém se nachází
+-- třetí a čtvrtá číslice vyznačují číselné oznčení sálu
+CREATE SEQUENCE salCislo START WITH 1 increment by 1;
 CREATE OR REPLACE TRIGGER znaceni_salu
     BEFORE INSERT ON KINOSAL
     FOR EACH ROW
 BEGIN
     IF :NEW.cislo_salu IS NULL THEN
 
-        :NEW.cislo_salu :=  :NEW.multikino_id + salCislo.currval ;
+        :NEW.cislo_salu :=  :NEW.multikino_id + salCislo.nextval ;
     end if;
-
 END;
 
+-- 2) Trigger konvertujici tržbý multikin z korun na eura
 CREATE OR REPLACE TRIGGER prevod_na_eura
   BEFORE INSERT ON multikino
   FOR EACH ROW
 BEGIN
-    :NEW.trzby := :NEW.trzby / 27;
+    :NEW.trzby := :NEW.trzby / 25.5;
 END;
 
 SELECT * FROM multikino;
 
+-- 3) Trigger kontrolujici spravnost rodného čísla.
 
 CREATE OR REPLACE TRIGGER kontrolaRodnehoCisla
         BEFORE INSERT OR UPDATE OF rc ON zakaznik
@@ -365,9 +372,45 @@ END kontrolaRodnehoCisla;
 
 --------------------------------------- PROCEDURY ------------------------------------------
 
--- dalsi procedura -- nejvice prodanych vsutpenek dle tarifu / kolik to je ze vsech plus kolik tvori online a hotove zaplacene
+-- 1) Nejvíce prodaných vstupenek dle tarifu / kolik procent to tvoří
+-- ze všech vstupenek + kolik z nich bylo uhrazeno online a kolik hotově
+CREATE OR REPLACE PROCEDURE nejviceProdanychVstupenek(typ IN VARCHAR)
+IS
+CURSOR obsah IS SELECT * FROM VSTUPENKA;
+act_row VSTUPENKA%ROWTYPE;
+pocet INT;
+pocet_vybranych INT;
+onlinee INT;
+hotove INT;
+BEGIN
+OPEN obsah;
+pocet := 0;
+pocet_vybranych := 0;
+onlinee := 0;
+hotove := 0;
+LOOP
+    FETCH obsah INTO act_row;
+    EXIT WHEN obsah%NOTFOUND;
+    IF (act_row.tarif = typ) THEN
+        pocet_vybranych := pocet_vybranych + 1;
+        IF (act_row.typ = 'Online') THEN
+        onlinee := onlinee + 1;
+        ELSE
+            hotove := hotove + 1;
+        end if;
+    END IF;
 
+    pocet := pocet + 1;
+END LOOP;
+DBMS_OUTPUT.PUT_LINE('Počet vstupenek s typem ' || typ || ' se prodalo ' || pocet_vybranych  || 'kusů.');
+DBMS_OUTPUT.PUT_LINE('Tvoří celkem ' || (pocet_vybranych/pocet)*100 || ' % ze všech prodaných vstupenek.');
+DBMS_OUTPUT.PUT_LINE( onlinee ||  ' byla/y uhrazeny online a zbytek (' || hotove || ') hotově.' );
+EXCEPTION
+WHEN ZERO_DIVIDE THEN
+DBMS_OUTPUT.PUT_LINE('Žádná vstupenka nebyla prodána :(');
+END;
 
+-- 2) Procedura počítá průměnou mzdu mezi všemi zaměstnaci pracujících v síti multikin.
 CREATE OR REPLACE PROCEDURE prumernaMzda
 IS
 CURSOR pracovnik IS SELECT * FROM ZAMESTNANEC;
@@ -384,12 +427,64 @@ EXIT WHEN pracovnik%NOTFOUND;
 plat := plat + act_row.mzda;
 pocet := pocet + 1;
 END LOOP;
-DBMS_OUTPUT.PUT_LINE('Prumerna mzda zamestnance v kine je CZK ' || ROUND(plat/pocet));
+DBMS_OUTPUT.PUT_LINE('Průměrná mzda zaměstnance multikina činí CZK ' || ROUND(plat/pocet));
 EXCEPTION
 WHEN ZERO_DIVIDE THEN
-DBMS_OUTPUT.PUT_LINE('Sit multikin nema zadne zamestnance');
+DBMS_OUTPUT.PUT_LINE('Síť multikin nemá žádné zaměstnance :(.');
 end;
 
+-- Demonstrace použití procedur - pro zobrazení outputu nutno povolit "DBMSOUTPUT"
+BEGIN
+   nejviceProdanychVstupenek('Dospely');
+   prumernaMzda();
+END;
+
+------------------------------------------- RIGHTS ------------------------------------------
+
+GRANT ALL ON FILM TO XMAKAI00;
+GRANT ALL ON KINOSAL TO XMAKAI00;
+GRANT ALL ON MULTIKINO TO XMAKAI00;
+GRANT ALL ON PROMITANI TO XMAKAI00;
+GRANT ALL ON REZERVACE TO XMAKAI00;
+GRANT ALL ON TRANSAKCE TO XMAKAI00;
+GRANT ALL ON VEDOUCI TO XMAKAI00;
+GRANT ALL ON VSTUPENKA TO XMAKAI00;
+GRANT ALL ON ZAKAZNIK TO XMAKAI00;
+GRANT ALL ON ZAMESTNANEC TO XMAKAI00;
+
+----------------------------------- MATERIALIZOVANY POHLED ----------------------------------
+
+DROP MATERIALIZED VIEW seznamZamestancu;
+CREATE MATERIALIZED VIEW LOG ON ZAMESTNANEC WITH PRIMARY KEY, ROWID(jmeno, prijmeni, email, telcislo) INCLUDING NEW VALUES;
+CREATE MATERIALIZED VIEW SEZNAMZAMESTNANCU
+BUILD IMMEDIATE
+REFRESH FAST ON COMMIT
+ENABLE QUERY REWRITE
+AS
+SELECT  Z.id, Z.jmeno, Z.prijmeni, Z.email, Z.telcislo
+FROM ZAMESTNANEC Z;
+
+-- Výpis materializovaného pohledu
+SELECT * FROM SEZNAMZAMESTANCU;
+
+-- Updatnuti telefonniho cisla zamestnance
+UPDATE ZAMESTNANEC SET telcislo = 420222333445 WHERE id = 1;
+COMMIT;
+
+-- Aktualizace probehne i v materializovanem pohledu
+SELECT * FROM SEZNAMZAMESTANCU;
+
+------------------------------------ ZOBRAZENÍ TABULEK --------------------------------------
+
+SELECT * FROM VEDOUCI;
+SELECT * FROM MULTIKINO;
+SELECT * FROM KINOSAL;
+SELECT * FROM FILM;
+SELECT * FROM PROMITANI;
+SELECT * FROM ZAMESTNANEC;
+SELECT * FROM REZERVACE;
+SELECT * FROM VSTUPENKA;
+SELECT * FROM ZAKAZNIK;
 
 ----------------------------------------- SELECTS ------------------------------------------
 
@@ -483,48 +578,3 @@ WHERE z.rc NOT IN (
     SELECT r.zakaznik_id
     FROM REZERVACE R
 );
-------------------------------------------- RIGHTS ------------------------------------------
-
-GRANT ALL ON FILM TO XMAKAI00;
-GRANT ALL ON KINOSAL TO XMAKAI00;
-GRANT ALL ON MULTIKINO TO XMAKAI00;
-GRANT ALL ON PROMITANI TO XMAKAI00;
-GRANT ALL ON REZERVACE TO XMAKAI00;
-GRANT ALL ON TRANSAKCE TO XMAKAI00;
-GRANT ALL ON VEDOUCI TO XMAKAI00;
-GRANT ALL ON VSTUPENKA TO XMAKAI00;
-GRANT ALL ON ZAKAZNIK TO XMAKAI00;
-GRANT ALL ON ZAMESTNANEC TO XMAKAI00;
-
------------------------------------ MATERIALIZOVANY POHLED ----------------------------------
--- still lotta work, TBD
-
-CREATE MATERIALIZED VIEW LOG ON ZAMESTNANEC WITH PRIMARY KEY, ROWID(jmeno, prijmeni, email, telcislo) INCLUDING NEW VALUES ;
-CREATE MATERIALIZED VIEW seznamZamestancu
-BUILD IMMEDIATE
-REFRESH FAST ON COMMIT
-ENABLE QUERY REWRITE
-AS
-SELECT ZAMESTNANEC.jmeno, zamestnanec.prijmeni, zamestnanec.id, zamestnanec.mzda
-FROM ZAMESTNANEC;
-
-DELETE FROM seznamZamestancu WHERE prijmeni = 'A';
-SELECT * FROM ZAMESTNANEC;
-
-commit ;
-SELECT * FROM seznamZamestancu;
-
-BEGIN
-prumernaMzda;
-END;
------------------------------------- ZOBRAZENÍ TABULEK --------------------------------------
-
-SELECT * FROM VEDOUCI;
-SELECT * FROM MULTIKINO;
-SELECT * FROM KINOSAL;
-SELECT * FROM FILM;
-SELECT * FROM PROMITANI;
-SELECT * FROM ZAMESTNANEC;
-SELECT * FROM REZERVACE;
-SELECT * FROM VSTUPENKA;
-SELECT * FROM ZAKAZNIK;
