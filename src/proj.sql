@@ -159,96 +159,6 @@ CREATE TABLE vstupenka
     	FOREIGN KEY (promitani_id) REFERENCES promitani (id)
 	        ON DELETE SET NULL
 );
-
------------------------------------- VLOZENI HODNOT --------------------------------------
-
-INSERT INTO VEDOUCI (id)
-VALUES (1);
-INSERT INTO VEDOUCI (id)
-VALUES (2);
-
-INSERT INTO MULTIKINO (jmeno, mesto,ulice, cislo_domu, trzby, vedouci_id)
-VALUES ('OC OLYMPIA' , 'Modřice', 'U Dálnice ', 3, 123456, 1);
-INSERT INTO MULTIKINO (jmeno, mesto, ulice, cislo_domu, trzby, vedouci_id)
-VALUES ('OC Velky Špalíček' , 'Brno', 'Mečová 695', 43, 456687, 2);
-
-INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, multikino_id)
-VALUES (15, 250, 1000);
-INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
-VALUES (20, 300, '3D', 1000);
-INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
-VALUES (15, 250, '2D', 1000);
-INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
-VALUES (15, 250, '2D', 2000);
-INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
-VALUES (20, 300, '3D', 2000);
-INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
-VALUES (15, 250, '2D', 2000);
-
-INSERT INTO FILM (nazev, dabing, zanr)
-VALUES ('FILM XYZ','český', 'komedie');
-INSERT INTO FILM (nazev, dabing, titulky, zanr)
-VALUES ('FILM ABC', 'anglický', 'české', 'komedie');
-INSERT INTO FILM (nazev,dabing, zanr)
-VALUES ('FILM LMN', 'český', 'drama');
-INSERT INTO FILM (nazev,dabing, titulky, zanr)
-VALUES ('FILM PQR', 'německý', 'české','drama');
-
-INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
-VALUES (120, '21-12-2021 12:00:00', '21-12-2021 14:00:00', 1002, 1);
-INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
-VALUES (90, '21-12-2021 14:00:00', '21-12-2021 15:30:00', 2004, 2);
-INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
-VALUES (180, '22-12-2021 18:00:00', '22-12-2021 21:00:00', 2005, 4);
-INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
-VALUES (180, '22-12-2021 12:00:00', '23-12-2021 15:00:00', 1002, 4);
-INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
-VALUES (180, '23-12-2021 14:00:00', '23-12-2021 17:00:00', 2004, 4);
-INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
-VALUES (100, '23-12-2021 11:00:00', '23-12-2021 12:40:00', 2005, 3);
-
-INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, mzda, email, telcislo, multikino_id, vedouci_id)
-VALUES('Pan', 'A', 'Modřice', 'Husova', 33, 45555, 'vedouci@multikino2.cz', 420111111111, 2000, 2);
-INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, mzda, email, telcislo, multikino_id, vedouci_id)
-VALUES('Pan', 'B', 'Brno', 'Česká', 23,  55655, 'vedouci@multikino1.cz', 420111111111, 1000, 1);
-INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, mzda, email, telcislo, multikino_id)
-VALUES('Paní', 'C', 'Brno', 'Hlavní', 30,  15555, 'zamestnanec3@multikino1.cz', 420111111111, 1000);
-INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, mzda, email, telcislo, multikino_id)
-VALUES('Pan', 'D', 'Brno', 'Jánská', 40,  25555, 'zamestnanec4@multikino1.cz', 420111111111, 1000);
-
-INSERT INTO zakaznik(rc, jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo)
-VALUES(7204250999 ,'Pan', 'Y', 'Brno', 'Hlavní', 12, 'panx@seznam.cz', 420111111111);
-INSERT INTO zakaznik(rc, jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo)
-VALUES(6162256386 ,'Paní', 'Y', 'Praha', 'Masarykova', 24, 'paniy@email.cz', 420222222222);
-INSERT INTO zakaznik(rc, jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo)
-VALUES(8160080610 ,'Paní', 'Z', 'Praha', 'Masarykova', 25, 'paniy@email.cz', 420222222222);
-
-INSERT INTO rezervace(zpusob_platby, zakaznik_id)
-VALUES ('Hotove', 7204250999);
-INSERT INTO rezervace(zpusob_platby, zakaznik_id)
-VALUES ('Hotove', 7204250999);
-INSERT INTO  rezervace(zpusob_platby, zakaznik_id)
-VALUES ('Online', 7204250999);
-INSERT INTO  rezervace(zpusob_platby, zakaznik_id)
-VALUES ('Online', 6162256386);
-
-INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
-VALUES (4, 9, 'Dospely', '', 'Zaplaceno', 1, 2, 2);
-INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
-VALUES (4, 8, 'Dospely', '', 'Zaplaceno', 1, 2, 2);
-INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
-VALUES (4, 10, 'Dite', '', 'Zaplaceno', 1, 2, 2);
-INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
-VALUES (5, 12, 'Student', '', 'Zaplaceno', 2, 4, 5);
-INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
-VALUES (5, 11, 'Dospely', '', 'Zaplaceno', 2, 4, 5);
-INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
-VALUES (10, 1, 'Dite', '', 'Zaplaceno', 1, 3, 3);
-INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id,  promitani_id )
-VALUES (5, 22, 'Dospely', 'Online', 'Zaplaceno', 2, 3);
-INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, promitani_id )
-VALUES (4, 23, 'Student', 'Online', 'Nezaplaceno', 3, 1);
-
 ----------------------------------------- TRIGGERS -----------------------------------------
 
 -- 1) Trigger generující identifikační čísla pro kinosály. První dvě číslice vyznačují kino ve kterém se nachází
@@ -370,6 +280,97 @@ BEGIN
 
 END kontrolaRodnehoCisla;
 
+
+------------------------------------ VLOZENI HODNOT --------------------------------------
+
+INSERT INTO VEDOUCI (id)
+VALUES (1);
+INSERT INTO VEDOUCI (id)
+VALUES (2);
+
+INSERT INTO MULTIKINO (jmeno, mesto,ulice, cislo_domu, trzby, vedouci_id)
+VALUES ('OC OLYMPIA' , 'Modřice', 'U Dálnice ', 3, 123456, 1);
+INSERT INTO MULTIKINO (jmeno, mesto, ulice, cislo_domu, trzby, vedouci_id)
+VALUES ('OC Velky Špalíček' , 'Brno', 'Mečová 695', 43, 456687, 2);
+
+INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, multikino_id)
+VALUES (15, 250,1000);
+INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
+VALUES (20, 300, '3D', 1000);
+INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
+VALUES (15, 250, '2D', 1000);
+INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
+VALUES (15, 250, '2D', 2000);
+INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
+VALUES (20, 300, '3D', 2000);
+INSERT INTO KINOSAL (pocet_rad, pocet_sedadel, typ, multikino_id)
+VALUES (15, 250, '2D', 2000);
+
+INSERT INTO FILM (nazev, dabing, zanr)
+VALUES ('FILM XYZ','český', 'komedie');
+INSERT INTO FILM (nazev, dabing, titulky, zanr)
+VALUES ('FILM ABC', 'anglický', 'české', 'komedie');
+INSERT INTO FILM (nazev,dabing, zanr)
+VALUES ('FILM LMN', 'český', 'drama');
+INSERT INTO FILM (nazev,dabing, titulky, zanr)
+VALUES ('FILM PQR', 'německý', 'české','drama');
+
+INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
+VALUES (120, '21-12-2021 12:00:00', '21-12-2021 14:00:00', 1002, 1);
+INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
+VALUES (90, '21-12-2021 14:00:00', '21-12-2021 15:30:00', 2004, 2);
+INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
+VALUES (180, '22-12-2021 18:00:00', '22-12-2021 21:00:00', 2005, 4);
+INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
+VALUES (180, '22-12-2021 12:00:00', '23-12-2021 15:00:00', 1002, 4);
+INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
+VALUES (180, '23-12-2021 14:00:00', '23-12-2021 17:00:00', 2004, 4);
+INSERT INTO promitani( delka_projekce, zacatek, konec, cislo_salu, film_id)
+VALUES (100, '23-12-2021 11:00:00', '23-12-2021 12:40:00', 2005, 3);
+
+INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, mzda, email, telcislo, multikino_id, vedouci_id)
+VALUES('Pan', 'A', 'Modřice', 'Husova', 33, 45555, 'vedouci@multikino2.cz', 420111111111, 2000, 2);
+INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, mzda, email, telcislo, multikino_id, vedouci_id)
+VALUES('Pan', 'B', 'Brno', 'Česká', 23,  55655, 'vedouci@multikino1.cz', 420111111111, 1000, 1);
+INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, mzda, email, telcislo, multikino_id)
+VALUES('Paní', 'C', 'Brno', 'Hlavní', 30,  15555, 'zamestnanec3@multikino1.cz', 420111111111, 1000);
+INSERT INTO zamestnanec(jmeno, prijmeni, mesto, ulice, cislo_domu, mzda, email, telcislo, multikino_id)
+VALUES('Pan', 'D', 'Brno', 'Jánská', 40,  25555, 'zamestnanec4@multikino1.cz', 420111111111, 1000);
+
+INSERT INTO zakaznik(rc, jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo)
+VALUES(7204250999 ,'Pan', 'Y', 'Brno', 'Hlavní', 12, 'panx@seznam.cz', 420111111111);
+INSERT INTO zakaznik(rc, jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo)
+VALUES(6162256386 ,'Paní', 'Y', 'Praha', 'Masarykova', 24, 'paniy@email.cz', 420222222222);
+INSERT INTO zakaznik(rc, jmeno, prijmeni, mesto, ulice, cislo_domu, email, telcislo)
+VALUES(8160080610 ,'Paní', 'Z', 'Praha', 'Masarykova', 25, 'paniy@email.cz', 420222222222);
+
+INSERT INTO rezervace(zpusob_platby, zakaznik_id)
+VALUES ('Hotove', 7204250999);
+INSERT INTO rezervace(zpusob_platby, zakaznik_id)
+VALUES ('Hotove', 7204250999);
+INSERT INTO  rezervace(zpusob_platby, zakaznik_id)
+VALUES ('Online', 7204250999);
+INSERT INTO  rezervace(zpusob_platby, zakaznik_id)
+VALUES ('Online', 6162256386);
+
+INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
+VALUES (4, 9, 'Dospely', '', 'Zaplaceno', 1, 2, 2);
+INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
+VALUES (4, 8, 'Dospely', '', 'Zaplaceno', 1, 2, 2);
+INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
+VALUES (4, 10, 'Dite', '', 'Zaplaceno', 1, 2, 2);
+INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
+VALUES (5, 12, 'Student', '', 'Zaplaceno', 2, 4, 5);
+INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
+VALUES (5, 11, 'Dospely', '', 'Zaplaceno', 2, 4, 5);
+INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, zamestnanec_id, promitani_id )
+VALUES (10, 1, 'Dite', '', 'Zaplaceno', 1, 3, 3);
+INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id,  promitani_id )
+VALUES (5, 22, 'Dospely', 'Online', 'Zaplaceno', 2, 3);
+INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, promitani_id )
+VALUES (4, 23, 'Student', 'Online', 'Nezaplaceno', 3, 1);
+
+
 --------------------------------------- PROCEDURY ------------------------------------------
 
 -- 1) Nejvíce prodaných vstupenek dle tarifu / kolik procent to tvoří
@@ -446,7 +447,6 @@ GRANT ALL ON KINOSAL TO XMAKAI00;
 GRANT ALL ON MULTIKINO TO XMAKAI00;
 GRANT ALL ON PROMITANI TO XMAKAI00;
 GRANT ALL ON REZERVACE TO XMAKAI00;
-GRANT ALL ON TRANSAKCE TO XMAKAI00;
 GRANT ALL ON VEDOUCI TO XMAKAI00;
 GRANT ALL ON VSTUPENKA TO XMAKAI00;
 GRANT ALL ON ZAKAZNIK TO XMAKAI00;
@@ -454,8 +454,8 @@ GRANT ALL ON ZAMESTNANEC TO XMAKAI00;
 
 ----------------------------------- MATERIALIZOVANY POHLED ----------------------------------
 
-DROP MATERIALIZED VIEW seznamZamestancu;
-CREATE MATERIALIZED VIEW LOG ON ZAMESTNANEC WITH PRIMARY KEY, ROWID(jmeno, prijmeni, email, telcislo) INCLUDING NEW VALUES;
+DROP MATERIALIZED VIEW SEZNAMZAMESTNANCU;
+CREATE MATERIALIZED VIEW LOG ON ZAMESTNANEC WITH PRIMARY KEY, ROWID (jmeno, prijmeni, email, telcislo) INCLUDING NEW VALUES;
 CREATE MATERIALIZED VIEW SEZNAMZAMESTNANCU
 BUILD IMMEDIATE
 REFRESH FAST ON COMMIT
@@ -465,14 +465,14 @@ SELECT  Z.id, Z.jmeno, Z.prijmeni, Z.email, Z.telcislo
 FROM ZAMESTNANEC Z;
 
 -- Výpis materializovaného pohledu
-SELECT * FROM SEZNAMZAMESTANCU;
+SELECT * FROM SEZNAMZAMESTNANCU;
 
 -- Updatnuti telefonniho cisla zamestnance
 UPDATE ZAMESTNANEC SET telcislo = 420222333445 WHERE id = 1;
 COMMIT;
 
 -- Aktualizace probehne i v materializovanem pohledu
-SELECT * FROM SEZNAMZAMESTANCU;
+SELECT * FROM SEZNAMZAMESTNANCU;
 
 ------------------------------------ ZOBRAZENÍ TABULEK --------------------------------------
 
