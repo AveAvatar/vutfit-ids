@@ -578,3 +578,42 @@ WHERE z.rc NOT IN (
     SELECT r.zakaznik_id
     FROM REZERVACE R
 );
+
+----------------------------- EXPLAIN PLAN - OPTIMALIZATION -------------------------------------
+
+-- Kolik vstupenek prodali zaměstnanci z Brna
+-- pokus1
+EXPLAIN PLAN FOR
+    SELECT
+        Z.jmeno,
+        Z.prijmeni,
+        COUNT(V.id) AS pocet_vstupenek
+    FROM ZAMESTNANEC Z
+    JOIN VSTUPENKA V ON Z.id = V.zamestnanec_id
+    WHERE Z.mesto = 'Brno'
+    GROUP BY z.jmeno, z.prijmeni
+    ORDER BY z.jmeno, z.prijmeni;
+
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+
+CREATE INDEX town_index
+ON zamestnanec (mesto);
+CREATE INDEX name_index
+ON zamestnanec (jmeno, prijmeni);
+
+-- Kolik vstupenek prodali zaměstnanci z Brna
+-- pokus2 -po optimalizaci pomocí vytvoření indexů
+EXPLAIN PLAN FOR
+    SELECT
+        Z.jmeno,
+        Z.prijmeni,
+        COUNT(V.id) AS pocet_vstupenek
+    FROM ZAMESTNANEC Z
+    JOIN VSTUPENKA V ON Z.id = V.zamestnanec_id
+    WHERE Z.mesto = 'Brno'
+    GROUP BY z.jmeno, z.prijmeni
+    ORDER BY z.jmeno, z.prijmeni;
+
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
+DROP INDEX name_index;
+DROP INDEX town_index;
