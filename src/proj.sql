@@ -1,8 +1,8 @@
--- SQL skript pro vytvoření základních objektů schématu databáze
+-- SQL skript - IDS projekt
 --------------------------------------------------------------------------------
 -- Autor: Lucia Makaiková <xmakai00@stud.fit.vutbr.cz>
 -- Autor: Tadeáš Kachyňa  <xkachy00@stud.fit.vutbr.cz>
-
+-- Datum: 02/05/2022
 -------------------------------- SMAZÁNÍ TABULEK -------------------------------
 
 DROP TABLE VSTUPENKA;
@@ -14,8 +14,8 @@ DROP TABLE FILM;
 DROP TABLE KINOSAL;
 DROP TABLE MULTIKINO;
 DROP TABLE VEDOUCI;
-DROP SEQUENCE cisloMultikina;
-DROP SEQUENCE salCislo;
+DROP SEQUENCE CISLOMULTIKINA;
+DROP SEQUENCE SALCISLO;
 
 ------------------------------- VYTVOŘENÍ TABULEK ------------------------------
 
@@ -105,12 +105,7 @@ CREATE TABLE zamestnanec
 
 CREATE TABLE zakaznik
 (
-    rc INT NOT NULL PRIMARY KEY
-        CHECK(REGEXP_LIKE(
-		rc , '^(([0-9]{2})(((0[1-9])|10|11|12)|(5[1-9]|60|61|62))(0[1-9]|[12][0-9]|3[01])(((?!000)[0-9]{3})|[0-9]{4}))$', 'i'
-		))
-        CONSTRAINT RC_CHECK
-            check(MOD(RC, 11) = 0),
+    rc INT NOT NULL PRIMARY KEY,
     jmeno VARCHAR(255) NOT NULL,
     prijmeni VARCHAR(255) NOT NULL,
     mesto VARCHAR(255) NOT NULL,
@@ -179,10 +174,8 @@ CREATE OR REPLACE TRIGGER prevod_na_eura
   BEFORE INSERT ON multikino
   FOR EACH ROW
 BEGIN
-    :NEW.trzby := :NEW.trzby / 25.5;
+    :NEW.trzby := ROUND(:NEW.trzby / 24.6); -- kurz k 02.05.22
 END;
-
-SELECT * FROM multikino;
 
 -- 3) Trigger kontrolujici spravnost rodného čísla.
 
@@ -195,6 +188,7 @@ DECLARE
         mesic VARCHAR(2);
         den VARCHAR(2);
         koncovka VARCHAR(4);
+        prestupnyROK BOOLEAN;
         boolRC BOOLEAN;
         boolECP BOOLEAN;
 BEGIN
@@ -203,18 +197,27 @@ BEGIN
         mesic := SUBSTR(rc, 3, 2);
         den := SUBSTR(rc, 5, 2);
 
-        -- Kontrola na numericke znaky
+        -- Kontrola na numerické znaku
         IF (LENGTH(TRIM(TRANSLATE(rc, '0123456789', ' '))) != NULL) THEN
-                RAISE_APPLICATION_ERROR(-20203, 'Neplatne znaky v rodnem cisle!');
+                RAISE_APPLICATION_ERROR(-20001, 'Rodné číslo není numerické.');
         END IF;
 
-        -- Koncovka ma 4
-        IF (LENGTH(rc) = 10) THEN
+
+         -- Kontrola RČ s 3místnou koncovkou
+        IF (LENGTH(rc) = 9) THEN
+            koncovka := SUBSTR(rc, 7, 3);
+
+            IF (koncovka = 000) THEN
+                    RAISE_APPLICATION_ERROR(-20004, 'Koncovka rodného čísla 000 je nepřípustná.');
+            END IF;
+
+        -- Kontrola RČ se 4místnou koncovkou
+        ELSIF (LENGTH(rc) = 10) THEN
             koncovka := SUBSTR(rc, 7, 4);
 
-            -- musi byt delitelna 11
+            -- RČ musí být dělitelné 11
             IF (MOD(rc,11) != 0) THEN
-                    RAISE_APPLICATION_ERROR(-20203, 'Rodne cislo neni delitelne 11!');
+                    RAISE_APPLICATION_ERROR(-20012, 'Rodné číslo není dělitelné 11.');
             END IF;
 
             IF (rok > 53) THEN
@@ -223,15 +226,8 @@ BEGIN
                 rok := rok + 2000;
             END IF;
 
-        ELSIF (LENGTH(rc) = 9) THEN
-            koncovka := SUBSTR(rc, 7, 3);
-
-            IF (koncovka = 000) THEN
-                    RAISE_APPLICATION_ERROR(-20203, 'Nespravny pocet znaku pro rodne cislo!');
-            END IF;
-
         ELSE
-                RAISE_APPLICATION_ERROR(-20203, 'Nespravny pocet znaku pro rodne cislo!');
+                RAISE_APPLICATION_ERROR(-20003, 'Nesprávná délka RČ!');
         END IF;
 
         IF (mesic > 50) THEN
@@ -249,37 +245,37 @@ BEGIN
         END IF;
 
         IF (boolECP = TRUE AND boolRC = TRUE) THEN
-            RAISE_APPLICATION_ERROR(-20203, 'Neplatne cislo ECP/RC');
+            RAISE_APPLICATION_ERROR(-20203, 'Nevalidní RČ/EČP měsíc +20 a zároveň den +40.');
         END IF;
-        ---------------------------------------
+
+        -- Kontrola rozsahu měsíc
         IF (mesic <= 0 AND mesic > 12) THEN
-            RAISE_APPLICATION_ERROR(-20203, 'Mesic mimo rozsah');
+            RAISE_APPLICATION_ERROR(-20003, 'Hodnota měsíc musí být 1-12.');
         END IF;
 
+        -- Kontrola rozsahu den
         IF (mesic <= 0 AND mesic > 31) THEN
-            RAISE_APPLICATION_ERROR(-20203, 'Den mimo rozsah');
+            RAISE_APPLICATION_ERROR(-20003, 'Den mimo rozsah.');
         END IF;
 
+        -- Kontrola správnosti dnu v jednotlivých měsících + konrola přestupného roku
         IF ((mesic = 4 OR mesic = 6 OR mesic = 9 OR mesic = 11) AND den > 30) THEN
-            RAISE_APPLICATION_ERROR(-20203, 'Den mimo rozsah');
+            RAISE_APPLICATION_ERROR(-20003, 'Den mimo rozsah');
         ELSIF (mesic = 2) THEN
             IF(den > 29) THEN
-                RAISE_APPLICATION_ERROR(-20203, 'Den mimo rozsah');
+                RAISE_APPLICATION_ERROR(-20003, 'Den mimo rozsah');
             ELSIF (den = 29) THEN
                 IF (MOD(rok, 4) != 0) THEN
                     IF (MOD(rok, 400) != 0) THEN
-                        RAISE_APPLICATION_ERROR(-20203, 'Rok nebyl prestupny');
+                        RAISE_APPLICATION_ERROR(-20003, 'Rok nebyl přestupný');
                     END IF;
                 ELSIF (((MOD(rok, 4) = 0) OR (MOD(rok, 400) = 0)) AND (MOD(rok,100) = 0)) THEN
-				    Raise_Application_Error (-20203, 'rok ' || rok ||' nebol priestupny!');
+				    Raise_Application_Error (-20003, 'rok ' || rok ||' nebyl přestupný!');
 			    END IF;
-
-
             END IF;
         END IF;
 
 END kontrolaRodnehoCisla;
-
 
 ------------------------------------ VLOZENI HODNOT --------------------------------------
 
@@ -370,12 +366,30 @@ VALUES (5, 22, 'Dospely', 'Online', 'Zaplaceno', 2, 3);
 INSERT INTO VSTUPENKA (rada, sedadlo, tarif, typ, stav_platby, rezervace_id, promitani_id )
 VALUES (4, 23, 'Student', 'Online', 'Nezaplaceno', 3, 1);
 
+---------------------------------- DEMONSTRACE TRIGGERŮ ------------------------------------
+
+-- Předvedení triggeru (1): Kinosály by měly mít identifikační číslo na základě ID multikina
+-- ve kterém se nacházejí. XXYY, kde XX označuje první dvoučíslí ID multikina a YY označení sálu
+    SELECT k.cislo_salu, m.jmeno, k.multikino_id
+    FROM KINOSAL K
+    JOIN MULTIKINO M ON
+    K.multikino_id = m.id;
+
+-- Předvedení triggeru (2): Tržby multikin by měli být převedeny na eura
+-- Konkrétněji prvního multikina by to mělo být 18565 Eur a 5019 Eur druhého multikina
+    SELECT jmeno, trzby AS trzby_v_eurech
+    FROM MULTIKINO
+    ORDER BY trzby_v_eurech DESC;
+
+-- Předvedení triggeru (3): Rodné čísla zákazníků splňují podmínky.
+    SELECT z.rc, z.jmeno, z.prijmeni
+    FROM ZAKAZNIK Z;
 
 --------------------------------------- PROCEDURY ------------------------------------------
 
 -- 1) Nejvíce prodaných vstupenek dle tarifu / kolik procent to tvoří
 -- ze všech vstupenek + kolik z nich bylo uhrazeno online a kolik hotově
-CREATE OR REPLACE PROCEDURE nejviceProdanychVstupenek(typ IN VARCHAR)
+CREATE OR REPLACE PROCEDURE pocetProdanychVstupenek(typ IN VARCHAR)
 IS
 CURSOR obsah IS SELECT * FROM VSTUPENKA;
 act_row VSTUPENKA%ROWTYPE;
@@ -403,7 +417,7 @@ LOOP
 
     pocet := pocet + 1;
 END LOOP;
-DBMS_OUTPUT.PUT_LINE('Počet vstupenek s typem ' || typ || ' se prodalo ' || pocet_vybranych  || 'kusů.');
+DBMS_OUTPUT.PUT_LINE('Počet vstupenek s typem ' || typ || ' se prodalo ' || pocet_vybranych  || ' kusů.');
 DBMS_OUTPUT.PUT_LINE('Tvoří celkem ' || (pocet_vybranych/pocet)*100 || ' % ze všech prodaných vstupenek.');
 DBMS_OUTPUT.PUT_LINE( onlinee ||  ' byla/y uhrazeny online a zbytek (' || hotove || ') hotově.' );
 EXCEPTION
@@ -436,7 +450,7 @@ end;
 
 -- Demonstrace použití procedur - pro zobrazení outputu nutno povolit "DBMSOUTPUT"
 BEGIN
-   nejviceProdanychVstupenek('Dospely');
+   pocetProdanychVstupenek('Dospely');
    prumernaMzda();
 END;
 
@@ -451,6 +465,9 @@ GRANT ALL ON VEDOUCI TO XMAKAI00;
 GRANT ALL ON VSTUPENKA TO XMAKAI00;
 GRANT ALL ON ZAKAZNIK TO XMAKAI00;
 GRANT ALL ON ZAMESTNANEC TO XMAKAI00;
+GRANT EXECUTE ON NEJVICEPRODANYCHVSTUPENEK TO XMAKAI00;
+GRANT EXECUTE ON PRUMERNAMZDA TO XMAKAI00;
+GRANT ALL ON SEZNAMZAMESTANCU TO XMAKAI00;
 
 ----------------------------------- MATERIALIZOVANY POHLED ----------------------------------
 
@@ -459,7 +476,6 @@ CREATE MATERIALIZED VIEW LOG ON ZAMESTNANEC WITH PRIMARY KEY, ROWID (jmeno, prij
 CREATE MATERIALIZED VIEW SEZNAMZAMESTNANCU
 BUILD IMMEDIATE
 REFRESH FAST ON COMMIT
-ENABLE QUERY REWRITE
 AS
 SELECT  Z.id, Z.jmeno, Z.prijmeni, Z.email, Z.telcislo
 FROM ZAMESTNANEC Z;
